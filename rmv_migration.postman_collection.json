@@ -1,0 +1,259 @@
+{
+	"info": {
+		"_postman_id": "7784354f-996c-4c36-9df6-7e9b04ad78aa",
+		"name": "rmv_migration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28832551"
+	},
+	"item": [
+		{
+			"name": "registerMotorbike",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW1hbiIsImlhdCI6MTc0OTYyODQwNSwiZXhwIjoxNzQ5NzE0ODA1fQ.yBV8ebizwThKXieoIoP42_kWkMn5nDfwMH3egUhpy9A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Username",
+						"value": "admin_user",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 1,\r\n  \"registrationNumber\": \"ABC-1234\",\r\n  \"ownerName\": \"Nimal Perera\",\r\n  \"ownerAddress\": \"123, Main Street, Colombo\",\r\n  \"ownerEmail\": \"nimal@example.com\",\r\n  \"motorbikeMake\": \"Honda\",\r\n  \"motorbikeModel\": \"CBR 250R\",\r\n  \"chassisNumber\": \"CHS1234567890\",\r\n  \"engineNumber\": \"ENG9876543210\",\r\n  \"totalAmount\": 425000.00,\r\n  \"registrationType\": \"NEW\",\r\n  \"registrationFee\": 5000.00,\r\n  \"deliveryDate\": \"2025-06-10\",\r\n  \"invoiceNumber\": \"INV20250610\",\r\n  \"invoiceDate\": \"2025-06-10\",\r\n  \"dealerName\": \"Auto Traders Ltd\",\r\n  \"dealerAddress\": \"456, High Road, Kandy\",\r\n  \"buyerName\": \"Nimal Perera\",\r\n  \"buyerAddress\": \"123, Main Street, Colombo\",\r\n  \"paymentReference\": \"PAY123456\",\r\n  \"paymentDate\": \"2025-06-09\",\r\n  \"paidBy\": \"Nimal Perera\",\r\n  \"amountPaid\": 430000.00,\r\n  \"paymentPurpose\": \"Motorbike Registration\",\r\n  \"bankName\": \"Bank of Ceylon\",\r\n  \"bankBranch\": \"Colombo Fort\",\r\n  \"status\": \"PENDING\",\r\n  \"registeredByUserId\": 1001\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/registrations",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"registrations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Username",
+						"value": "admin_user",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"numal\",\r\n    \"email\": \"saman@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"fullName\": \"sharada marasinha\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"numal\",\r\n  \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW1hbiIsImlhdCI6MTc0OTYyOTU2MCwiZXhwIjoxNzQ5NzE1OTYwfQ.1XaF8CzfIulisURksUAsnG2a90-EUccKypVjCWG8Di0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Username",
+						"value": "admin_user",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"number\": \"ABC-1111\",\r\n  \"numberType\": \"SPECIAL\",\r\n  \"category\": \"MILESTONE\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/registrations/admin/registration-numbers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"registrations",
+						"admin",
+						"registration-numbers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get current number plate",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW1hbiIsImlhdCI6MTc0OTYyOTU2MCwiZXhwIjoxNzQ5NzE1OTYwfQ.1XaF8CzfIulisURksUAsnG2a90-EUccKypVjCWG8Di0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Username",
+						"value": "admin_user",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"number\": \"ABC-1111\",\r\n  \"numberType\": \"SPECIAL\",\r\n  \"category\": \"MILESTONE\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/number-plates/current",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"number-plates",
+						"current"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "book-number-plate",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW1hbiIsImlhdCI6MTc0OTYyOTU2MCwiZXhwIjoxNzQ5NzE1OTYwfQ.1XaF8CzfIulisURksUAsnG2a90-EUccKypVjCWG8Di0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Username",
+						"value": "admin_user",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"number\": \"AAA-0003\",\r\n    \"category\": \"MILESTONE\",\r\n    \"numberType\": \"SPECIAL\",\r\n    \"price\": 150000.00,\r\n    \"available\": true,\r\n    \"locked\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/number-plates/book-number-plate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"number-plates",
+						"book-number-plate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

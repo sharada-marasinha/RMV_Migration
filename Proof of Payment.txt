@@ -1,0 +1,9 @@
+Proof of Payment - Motorbike Registration
+Bank Name: National Bank of Pakistan
+Branch: Blue Area, Islamabad
+Payment Date: 2025-06-11
+Payment Reference: REG-TXN-20250611-778899
+Paid By: Ahmed Khan
+Amount Paid: Rs. 20,000
+Payment Purpose: Registration Fee
+Registration Type: Special

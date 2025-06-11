@@ -1,0 +1,18 @@
+Performa Invoice
+Dealer Name: Fast Wheels Motorbike Co.
+Dealer Address: 123 Main Street, Capital City
+Invoice Number: INV-2025-0987
+Invoice Date: 2025-06-10
+Buyer Name: Ahmed Khan
+Buyer Address: House #45, Sector G-11, Islamabad
+Motorbike Make: Honda
+Motorbike Model: CB 150F
+Proof Of Payment Text File
+Parsing & Validation Expectations
+From Proof of Payment:
+P.S. All data from both text files should be extracted and stored in the database for auditing
+purposes.
+Chassis Number: HND1234567890
+Engine Number: ENG0987654321
+Total Amount: Rs. 450,000
+Delivery Date: 2025-06-12
