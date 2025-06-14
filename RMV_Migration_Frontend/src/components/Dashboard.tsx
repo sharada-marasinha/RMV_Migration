@@ -5,70 +5,6 @@ import { formatPrice } from '../utils/pricing';
 
 import { numberPlateService } from '../services/api';
 
-// Mock data for demonstration
-const mockCurrentPlate: NumberPlate = {
-  id: 1,
-  numberPlate: 'ABC-1234',
-  price: 150000,
-  isAvailable: true,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-};
-
-const mockRegistrations: MotorbikeRegistration[] = [
-  {
-    id: 1,
-    registrationNumber: 'ABC-1234',
-    ownerName: 'John Doe',
-    ownerNic: '123456789V',
-    ownerAddress: '123 Main St, Colombo',
-    ownerPhone: '+94771234567',
-    motorbikeMake: 'Honda',
-    motorbikeModel: 'CB150R',
-    motorbikeYear: 2023,
-    engineNumber: 'ENG123456',
-    chassisNumber: 'CHS789012',
-    totalAmount: 150000,
-    status: 'COMPLETED',
-    createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-    updatedAt: new Date(Date.now() - 86400000).toISOString(),
-  },
-  {
-    id: 2,
-    registrationNumber: 'DEF-5678',
-    ownerName: 'Jane Smith',
-    ownerNic: '987654321V',
-    ownerAddress: '456 Oak Ave, Kandy',
-    ownerPhone: '+94779876543',
-    motorbikeMake: 'Yamaha',
-    motorbikeModel: 'R15',
-    motorbikeYear: 2022,
-    engineNumber: 'ENG654321',
-    chassisNumber: 'CHS210987',
-    totalAmount: 175000,
-    status: 'PENDING',
-    createdAt: new Date(Date.now() - 172800000).toISOString(),
-    updatedAt: new Date(Date.now() - 172800000).toISOString(),
-  },
-  {
-    id: 3,
-    registrationNumber: 'GHI-9012',
-    ownerName: 'Mike Johnson',
-    ownerNic: '456789123V',
-    ownerAddress: '789 Pine Rd, Galle',
-    ownerPhone: '+94774567890',
-    motorbikeMake: 'Bajaj',
-    motorbikeModel: 'Pulsar',
-    motorbikeYear: 2021,
-    engineNumber: 'ENG789456',
-    chassisNumber: 'CHS456789',
-    totalAmount: 125000,
-    status: 'CANCELLED',
-    createdAt: new Date(Date.now() - 259200000).toISOString(),
-    updatedAt: new Date(Date.now() - 259200000).toISOString(),
-  },
-];
-
 const Dashboard: React.FC = () => {
   const [currentPlate, setCurrentPlate] = useState<NumberPlate | null>(null);
   const [registrations, setRegistrations] = useState<MotorbikeRegistration[]>([]);
@@ -91,8 +27,6 @@ const Dashboard: React.FC = () => {
       let data = (await numberPlateService.getCurrentNumberPlate());
       setCurrentPlate(data)
 
-
-      const plateData = mockCurrentPlate;
       const registrationsData = mockRegistrations;
 
 

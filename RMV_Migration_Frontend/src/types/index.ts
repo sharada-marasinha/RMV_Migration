@@ -47,10 +47,14 @@ export interface MotorbikeRegistration {
 }
 
 export interface NumberPlate {
+  id: number,
   numberPlate: string;
   price: number;
+  isAvailable: boolean,
   category: 'NORMAL' | 'SPECIAL';
-  specialCategory: 'NORMAL' | 'MILESTONE' | 'ONE_REPETITION' | 'TWO_REPETITIONS' | 'FULL_REPETITION' | 'CHARACTER_BUMP';
+  specialCategory: 'NORMAL' | 'MILESTONE' | 'ONE_REPETITION' | 'TWO_REPETITIONS' | 'FULL_REPETITION' | 'CHARACTER_BUMP';,
+  createdAt: any,
+  updatedAt: any
 }
 
 export interface NewRegistration {
@@ -88,3 +92,13 @@ export interface OCRData {
   amountPaid?: number;
   paymentPurpose?: string;
 }
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  token: string;
+  role?: string;
+};
+
+export type TabType = 'dashboard' | 'settings' | 'profile';

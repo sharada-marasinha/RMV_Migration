@@ -2,9 +2,12 @@ package edu.rmv.service;
 
 import edu.rmv.entity.MotorbikeRegistration;
 import edu.rmv.entity.RegistrationNumber;
+import edu.rmv.numberpool.PlateGenerator;
 import edu.rmv.repository.impl.MotorbikeRegistrationDao;
 import edu.rmv.repository.impl.RegistrationNumberDao;
+import edu.rmv.util.NumberType;
 import edu.rmv.util.RegistrationStatus;
+import edu.rmv.util.SpecialCategory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,25 +43,38 @@ public class RegistrationService {
         registration.setRegisteredAt(LocalDateTime.now());
         registration.setUpdatedAt(LocalDateTime.now());
 
-        if ("NORMAL".equalsIgnoreCase(registration.getRegistrationType())) {
-            String normalNumber = numberGenerationService.generateNextNormalNumber();
-            registration.setRegistrationNumber(normalNumber);
-            registration.setRegistrationFee(new BigDecimal("7000"));
-        } else if ("SPECIAL".equalsIgnoreCase(registration.getRegistrationType())) {
-            Optional<RegistrationNumber> specialNumber = numberDao.findByNumber(registration.getRegistrationNumber());
-            if (specialNumber.isPresent() && specialNumber.get().isLocked() &&
-                    specialNumber.get().getLockedByUserId().equals(userId)) {
-                registration.setRegistrationFee(specialNumber.get().getPrice());
-                numberDao.markAsUsed(registration.getRegistrationNumber());
-            } else {
-                throw new RuntimeException("Special number not available or not locked by user");
-            }
+        RegistrationNumber registrationNumber = numberGenerationService.bookNumberPlate(
+                new RegistrationNumber(
+                        registration.getRegistrationNumber(),
+                        registration.getRegistrationType(),
+                        PlateGenerator.findSpacialCategory(registration.getRegistrationNumber()),
+                        registration.getRegistrationFee()
+                )
+        );
+        if (registrationNumber == null) {
+            throw new RuntimeException("Registration number is not available or invalid");
         }
 
-        registration.setStatus(RegistrationStatus.COMPLETED);
+//        (String numberPlate, NumberType numberType, SpecialCategory specialCategory, BigDecimal price
+
+//        if ("NORMAL".equalsIgnoreCase(registration.getRegistrationType())) {
+//            String normalNumber = numberGenerationService.generateNextNormalNumber();
+//            registration.setRegistrationNumber(normalNumber);
+//            registration.setRegistrationFee(new BigDecimal("7000"));
+//        } else if ("SPECIAL".equalsIgnoreCase(registration.getRegistrationType())) {
+//            Optional<RegistrationNumber> specialNumber = numberDao.findByNumber(registration.getRegistrationNumber());
+//            if (specialNumber.isPresent() && specialNumber.get().isLocked() &&
+//                    specialNumber.get().getLockedByUserId().equals(userId)) {
+//                registration.setRegistrationFee(specialNumber.get().getPrice());
+//                numberDao.markAsUsed(registration.getRegistrationNumber());
+//            } else {
+//                throw new RuntimeException("Special number not available or not locked by user");
+//            }
+//        }
+
+//        registration.setStatus(RegistrationStatus.COMPLETED);
         MotorbikeRegistration savedRegistration = registrationDao.save(registration);
 
-        // Send confirmation email
         emailService.sendRegistrationConfirmation(savedRegistration);
 
         return savedRegistration;

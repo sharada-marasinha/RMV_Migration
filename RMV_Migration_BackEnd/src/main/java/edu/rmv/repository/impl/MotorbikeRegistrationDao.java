@@ -1,6 +1,7 @@
 package edu.rmv.repository.impl;
 
 import edu.rmv.entity.MotorbikeRegistration;
+import edu.rmv.util.NumberType;
 import edu.rmv.util.RegistrationStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,7 +22,6 @@ public class MotorbikeRegistrationDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-
     private final RowMapper<MotorbikeRegistration> registrationRowMapper = (rs, rowNum) -> {
         MotorbikeRegistration registration = new MotorbikeRegistration();
         registration.setId(rs.getLong("id"));
@@ -34,7 +34,7 @@ public class MotorbikeRegistrationDao {
         registration.setChassisNumber(rs.getString("chassis_number"));
         registration.setEngineNumber(rs.getString("engine_number"));
         registration.setTotalAmount(rs.getBigDecimal("total_amount"));
-        registration.setRegistrationType(rs.getString("registration_type"));
+        registration.setRegistrationType(NumberType.valueOf(rs.getString("registration_type")));
         registration.setRegistrationFee(rs.getBigDecimal("registration_fee"));
         registration.setDeliveryDate(rs.getDate("delivery_date") != null ? rs.getDate("delivery_date").toLocalDate() : null);
         registration.setInvoiceNumber(rs.getString("invoice_number"));
@@ -87,7 +87,7 @@ public class MotorbikeRegistrationDao {
             ps.setString(7, registration.getChassisNumber());
             ps.setString(8, registration.getEngineNumber());
             ps.setBigDecimal(9, registration.getTotalAmount());
-            ps.setString(10, registration.getRegistrationType());
+            ps.setString(10, String.valueOf(registration.getRegistrationType()));
             ps.setBigDecimal(11, new BigDecimal("5000.00"));
             ps.setDate(12, registration.getDeliveryDate() != null ? java.sql.Date.valueOf(registration.getDeliveryDate()) : null);
             ps.setString(13, registration.getInvoiceNumber());

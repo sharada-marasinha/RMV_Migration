@@ -1,5 +1,6 @@
 package edu.rmv.entity;
 
+import edu.rmv.util.NumberType;
 import edu.rmv.util.RegistrationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class MotorbikeRegistration {
     private String chassisNumber;
     private String engineNumber;
     private BigDecimal totalAmount;
-    private String registrationType;
+    private NumberType registrationType;
     private BigDecimal registrationFee;
     private LocalDate deliveryDate;
     private String invoiceNumber;

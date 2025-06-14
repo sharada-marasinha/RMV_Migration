@@ -28,23 +28,22 @@ public class RegistrationController {
     private final UserService userService;
     private final NumberGenerationService numberGenerationService;
 
-//    @PostMapping
-//    public ResponseEntity<?> createRegistration(@Valid @RequestBody RegisterRequest request,
-//                                                Authentication authentication) {
-//        try {
-//            User user = userService.findByUsername(authentication.getName()).orElse(null);
-//            if (user == null) {
-//                return ResponseEntity.badRequest().body("User not found");
-//            }
-//
-//            MotorbikeRegistration registration = convertToEntity(request);
-//            MotorbikeRegistration savedRegistration = registrationService.registerMotorbike(registration, user.getId());
-//
-//            return ResponseEntity.ok(savedRegistration);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Registration failed: " + e.getMessage());
-//        }
-//    }
+    @PostMapping
+    public ResponseEntity<?> createRegistration(@Valid @RequestBody MotorbikeRegistration registration,
+                                                Authentication authentication) {
+        try {
+            User user = userService.findByUsername(authentication.getName()).orElse(null);
+            if (user == null) {
+                return ResponseEntity.badRequest().body("User not found");
+            }
+            System.out.println(registration);
+            MotorbikeRegistration savedRegistration = registrationService.registerMotorbike(registration, user.getId());
+
+            return ResponseEntity.ok(savedRegistration);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Registration failed: " + e.getMessage());
+        }
+    }
 
     @GetMapping
     public ResponseEntity<List<MotorbikeRegistration>> getUserRegistrations(Authentication authentication) {
@@ -63,11 +62,7 @@ public class RegistrationController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/special-numbers")
-    public ResponseEntity<List<RegistrationNumber>> getAvailableSpecialNumbers() {
-        List<RegistrationNumber> numbers = registrationService.getAvailableSpecialNumbers();
-        return ResponseEntity.ok(numbers);
-    }
+
     @PostMapping("/admin/registration-numbers")
     public RegistrationNumber addRegistrationNumber(@RequestBody RegistrationNumber registrationNumber) {
         BigDecimal price = registrationNumber.getPrice() != null
@@ -79,23 +74,4 @@ public class RegistrationController {
         );
         return saved;
     }
-
-
-    @PostMapping("/lock-special-number/{number}")
-    public ResponseEntity<?> lockSpecialNumber(@PathVariable String number, Authentication authentication) {
-        User user = userService.findByUsername(authentication.getName()).orElse(null);
-        if (user == null) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        boolean locked = registrationService.lockSpecialNumber(number, user.getId());
-        if (locked) {
-            return ResponseEntity.ok("Number locked successfully");
-        } else {
-            return ResponseEntity.badRequest().body("Failed to lock number");
-        }
-    }
-
-
-
 }

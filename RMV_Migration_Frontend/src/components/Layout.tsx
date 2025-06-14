@@ -1,13 +1,21 @@
 import React from 'react';
 import { Car, Users, FileText, Settings } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+
+type TabType = 'dashboard' | 'registrations' | 'special-numbers' | 'new-registration';
 
 interface LayoutProps {
   children: React.ReactNode;
   activeTab: string;
-  onTabChange: (tab: string) => void;
+  onTabChange: (tab: TabType) => void;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => {
+  const { user } = useAuth();
+
+  console.log(user?.fullName);
+
+
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: Car },
     { id: 'registrations', label: 'Registrations', icon: FileText },
@@ -27,9 +35,16 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-500">
-                Motorbike Registration Dashboard
-              </div>
+              {user && (
+                <div className="flex items-center">
+                  <div className="text-sm text-gray-500 mr-4">
+                    Welcome, {user.fullName}
+                  </div>
+                  <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {user.role}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -42,12 +57,11 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
             return (
               <button
                 key={tab.id}
-                onClick={() => onTabChange(tab.id)}
-                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === tab.id
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                }`}
+                onClick={() => onTabChange(tab.id as TabType)}
+                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === tab.id
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
               >
                 <Icon className="h-4 w-4 mr-2" />
                 {tab.label}

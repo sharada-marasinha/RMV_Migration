@@ -19,13 +19,32 @@ public class RegistrationNumber {
     private NumberType numberType;
     private SpecialCategory category;
     private BigDecimal price;
-    private boolean available;
-    private boolean locked;
+    private Boolean available;
+    private Boolean isLocked;
     private LocalDateTime lockExpiresAt;
     private Long lockedByUserId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
-    public RegistrationNumber(String nextNumber, NumberType numberType, SpecialCategory specialCategory, BigDecimal bigDecimal) {
+    public RegistrationNumber(String numberPlate, NumberType numberType, SpecialCategory specialCategory, BigDecimal price) {
+        this.number = numberPlate;
+        this.numberType = numberType;
+        this.category = specialCategory;
+        this.price = price;
+        this.available = false;
+        this.isLocked = true;
+    }
+
+
+
+    public boolean isLocked() {
+        return false;
+    }
+
+    public boolean isAvailable() {
+        return true;
+    }
+
+    public void setLocked(boolean isLocked) {
     }
 }

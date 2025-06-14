@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, FileText, AlertCircle, CheckCircle, User, Car, CreditCard } from 'lucide-react';
-import { numberPlateService } from '../services/api';
+import { numberPlateService, registrationService } from '../services/api';
 import { NewRegistration, OCRData } from '../types';
 import { parseInvoiceFile, parsePaymentFile, validateOCRData } from '../utils/ocrParser';
 import { formatPrice, getSpecialNumberPrice } from '../utils/pricing';
@@ -57,6 +57,8 @@ const NewRegistrationForm: React.FC = () => {
 
       if (type === 'invoice') {
         parsedData = parseInvoiceFile(text);
+        console.log(parsedData);
+
         setOcrData((prev) => ({ ...prev, invoice: parsedData }));
 
         // Auto-fill form with invoice data
@@ -108,23 +110,45 @@ const NewRegistrationForm: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+
+    // if (!validateForm()) return;
 
     try {
       setLoading(true);
+      const currentNumberPlate = await numberPlateService.getCurrentNumberPlate();
+      console.log(currentNumberPlate);
 
-      // Create registration data
       const registrationData = {
-        number: formData.specialNumber || 'AUTO', // AUTO for normal registration
-        numberType: formData.registrationType,
-        category: formData.registrationType === 'SPECIAL' ? 'ONE_REPETITION' : 'NORMAL',
-        price: calculateTotal(),
-        available: true,
-        locked: false,
+        ownerName: formData.ownerName,
+        registrationNumber: currentNumberPlate.numberPlate,
+        ownerAddress: formData.ownerAddress,
+        ownerEmail: formData.ownerEmail,
+        motorbikeMake: formData.motorbikeMake,
+        motorbikeModel: formData.motorbikeModel,
+        chassisNumber: formData.chassisNumber,
+        engineNumber: formData.engineNumber,
+        totalAmount: calculateTotal(),
+        registrationType: formData.registrationType,
+        registrationFee: calculateTotal(),
+        deliveryDate: new Date(),
+        invoiceNumber: ocrData.invoice.invoiceNumber || '',
+        invoiceDate: ocrData.invoice.invoiceDate ? new Date(ocrData.invoice.invoiceDate) : new Date(),
+        dealerName: ocrData.invoice.dealerName || '',
+        dealerAddress: ocrData.invoice.dealerAddress || '',
+        buyerName: ocrData.invoice.buyerName || formData.ownerName,
+        buyerAddress: ocrData.invoice.buyerAddress || formData.ownerAddress,
+        paymentReference: ocrData.payment.paymentReference || '',
+        paymentDate: ocrData.payment.paymentDate ? new Date(ocrData.payment.paymentDate) : new Date(),
+        paidBy: ocrData.payment.paidBy || formData.ownerName,
+        amountPaid: ocrData.payment.amountPaid || calculateTotal(),
+        paymentPurpose: 'Motorbike Registration',
+        bankName: ocrData.payment.bankName || '',
+        bankBranch: ocrData.payment.bankBranch || '',
+        status: 'PENDING',
+        registeredByUserId: 0
       };
-
-      await numberPlateService.bookNumberPlate(registrationData);
-
+      console.log(registrationData);
+      await registrationService.submitRegistration(registrationData);
       setSuccess(true);
       setStep(4);
     } catch (error) {
@@ -498,8 +522,8 @@ const NewRegistrationForm: React.FC = () => {
               <div key={stepNumber} className="flex items-center">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= stepNumber
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-600'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-600'
                     }`}
                 >
                   {stepNumber}

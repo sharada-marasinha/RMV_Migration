@@ -72,9 +72,6 @@ public class AuthController {
                 registerRequest.getFullName(),
                 UserRole.USER
         );
-
-        User savedUser = userService.createUser(user);
-
-        return ResponseEntity.ok("User registered successfully"+savedUser.toString());
+        return ResponseEntity.ok(userService.createUser(user));
     }
 }

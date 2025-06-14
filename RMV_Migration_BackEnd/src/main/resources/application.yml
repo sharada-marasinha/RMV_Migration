@@ -1,6 +1,6 @@
 spring:
     application:
-        name: wedding-planner
+        name: rmv_migration
     mail:
       host: smtp.gmail.com
       port: 587
