@@ -51,8 +51,7 @@ export interface NumberPlate {
   numberPlate: string;
   price: number;
   isAvailable: boolean,
-  category: 'NORMAL' | 'SPECIAL';
-  specialCategory: 'NORMAL' | 'MILESTONE' | 'ONE_REPETITION' | 'TWO_REPETITIONS' | 'FULL_REPETITION' | 'CHARACTER_BUMP',
+  numberCategory: 'NORMAL' | 'MILESTONE' | 'ONE_REPETITION' | 'TWO_REPETITIONS' | 'FULL_REPETITION' | 'CHARACTER_BUMP',
   createdAt: any,
   updatedAt: any
 }
@@ -94,11 +93,11 @@ export interface OCRData {
 }
 
 export type User = {
-  id: string;
-  name: string;
-  email: string;
-  token: string;
-  role?: string;
+    userId: string;
+    username: string;
+    fullName: string;
+    token: string;
+    role?: string;
 };
 
 export type LoginResponse = {

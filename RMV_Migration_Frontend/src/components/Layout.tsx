@@ -1,5 +1,5 @@
 import React from 'react';
-import { Car, Users, FileText, Settings } from 'lucide-react';
+import { Car, Users, FileText, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 type TabType = 'dashboard' | 'registrations' | 'special-numbers' | 'new-registration';
@@ -11,8 +11,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => {
-  
-  const { user } = useAuth();
+  const { user, logout } = useAuth(); // ✅ add logout
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: Car },
@@ -34,13 +33,17 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
             </div>
             <div className="flex items-center space-x-4">
               {user && (
-                <div className="flex items-center">
-                  <div className="text-sm text-gray-500 mr-4">
-                    Welcome, {user.fullName}
+                <div className="flex items-center space-x-4">
+                  <div className="text-sm text-gray-500">
+                    <b>{user.fullName.toUpperCase()}</b>
                   </div>
-                  <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {user.role}
-                  </div>
+                  <button
+                    onClick={logout}
+                    className="flex items-center space-x-1 text-sm text-red-600 hover:text-red-800"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </button>
                 </div>
               )}
             </div>

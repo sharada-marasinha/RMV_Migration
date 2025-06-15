@@ -552,7 +552,7 @@ const NewRegistrationForm: React.FC = () => {
                 </div>
                 <div className="bg-gray-50 px-3 py-2 rounded-md">
                   <span className="font-medium text-gray-700 block mb-1">Category</span>
-                  <span className="text-gray-900">{current?.specialCategory || '-'}</span>
+                  <span className="text-gray-900">{current?.numberCategory || '-'}</span>
                 </div>
               </div>
             </div>

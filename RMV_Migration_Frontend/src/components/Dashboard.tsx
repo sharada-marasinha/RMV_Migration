@@ -52,7 +52,7 @@ const Dashboard: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between gap-6">
             <div className="flex-1">
               <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                Your Current Registration Number
+                Current Ongoing Registration Number
               </h2>
               <p className="text-blue-100 mb-6 text-lg">
                 Latest available registration number
@@ -74,8 +74,7 @@ const Dashboard: React.FC = () => {
                     <div className="bg-white/5 p-3 rounded-md">
                       <p className="text-blue-100 text-sm font-medium">Category</p>
                       <p className="text-white">
-                        {current?.category || '-'}{' '}
-                        {current?.specialCategory && `(${current.specialCategory})`}
+                        {current?.numberCategory && `(${current.numberCategory})`}
                       </p>
                     </div>
                   </div>

@@ -36,7 +36,6 @@ api.interceptors.response.use(
 );
 
 
-
 export const authService = {
   login: async (email: string, password: string): Promise<LoginResponse> => {
     const response = await fetch('/api/login', {

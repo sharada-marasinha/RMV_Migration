@@ -1,12 +1,5 @@
-import { createContext, useState, ReactNode, useContext } from 'react';
-
-export type User = {
-    userId: string;
-    username: string;
-    fullName: string;
-    token: string;
-    role?: string;
-};
+import { createContext, useState, ReactNode, useContext, useEffect } from 'react';
+import { User } from '../types/index';
 
 type AuthContextType = {
     user: User | null;
@@ -24,20 +17,38 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
+
+        if (token && storedUser) {
+            const parsedUser = JSON.parse(storedUser);
+            setUser({ ...parsedUser, token });
+            setIsAuthenticated(true);
+        }
+
+        setIsLoading(false);
+    }, []);
 
     const login = (userData: User) => {
         setUser(userData);
-        console.log(userData);
-
         setIsAuthenticated(true);
         localStorage.setItem('token', userData.token);
+        localStorage.setItem('user', JSON.stringify(userData));
     };
 
     const logout = () => {
         setUser(null);
         setIsAuthenticated(false);
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
     };
+
+    if (isLoading) {
+        return <div>Loading session...</div>;
+    }
 
     return (
         <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
