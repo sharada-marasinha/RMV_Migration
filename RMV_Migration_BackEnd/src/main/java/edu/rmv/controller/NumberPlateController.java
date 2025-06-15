@@ -20,6 +20,7 @@ public class NumberPlateController {
     private final NumberGenerationService service;
     private final RegistrationService registrationService;
     private final UserService userService;
+
     @GetMapping("/current")
     public NumberPlate getCurrentNumberPlate() {
         return service.getCurrentNumberPlate();
@@ -34,6 +35,7 @@ public class NumberPlateController {
     public String charBounce(@PathVariable String input) {
         return service.charBounce(input);
     }
+
     @GetMapping("/special-numbers")
     public ResponseEntity<List<RegistrationNumber>> getAvailableSpecialNumbers() {
         List<RegistrationNumber> numbers = registrationService.getAvailableSpecialNumbers();
@@ -54,6 +56,5 @@ public class NumberPlateController {
             return ResponseEntity.badRequest().body("Failed to lock number");
         }
     }
-
 
 }

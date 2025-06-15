@@ -1,8 +1,8 @@
 package edu.rmv.repository.impl;
 
 import edu.rmv.entity.RegistrationNumber;
+import edu.rmv.util.NumberCategory;
 import edu.rmv.util.NumberType;
-import edu.rmv.util.SpecialCategory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -10,8 +10,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,23 +24,20 @@ public class RegistrationNumberDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private final RowMapper<RegistrationNumber> numberRowMapper = new RowMapper<RegistrationNumber>() {
-        @Override
-        public RegistrationNumber mapRow(ResultSet rs, int rowNum) throws SQLException {
-            RegistrationNumber number = new RegistrationNumber();
-            number.setId(rs.getLong("id"));
-            number.setNumber(rs.getString("number"));
-            number.setNumberType(NumberType.valueOf(rs.getString("number_type")));
-            number.setCategory(SpecialCategory.valueOf(rs.getString("category")));
-            number.setPrice(rs.getBigDecimal("price"));
-            number.setAvailable(rs.getBoolean("is_available"));
-            number.setLocked(rs.getBoolean("is_locked"));
-            number.setLockExpiresAt(rs.getTimestamp("lock_expires_at") != null ? rs.getTimestamp("lock_expires_at").toLocalDateTime() : null);
-            number.setLockedByUserId(rs.getObject("locked_by_user_id", Long.class));
-            number.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-            number.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-            return number;
-        }
+    private final RowMapper<RegistrationNumber> numberRowMapper = (rs, rowNum) -> {
+        RegistrationNumber number = new RegistrationNumber();
+        number.setId(rs.getLong("id"));
+        number.setNumber(rs.getString("number"));
+        number.setNumberType(NumberType.valueOf(rs.getString("number_type")));
+        number.setCategory(NumberCategory.valueOf(rs.getString("category")));
+        number.setPrice(rs.getBigDecimal("price"));
+        number.setAvailable(rs.getBoolean("is_available"));
+        number.setIsLocked(rs.getBoolean("is_locked"));
+        number.setLockExpiresAt(rs.getTimestamp("lock_expires_at") != null ? rs.getTimestamp("lock_expires_at").toLocalDateTime() : null);
+        number.setLockedByUserId(rs.getObject("locked_by_user_id", Long.class));
+        number.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        number.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+        return number;
     };
 
     public RegistrationNumber save(RegistrationNumber number) {
@@ -65,8 +60,8 @@ public class RegistrationNumberDao {
             ps.setString(2, number.getNumberType().name());
             ps.setString(3, number.getCategory().name());
             ps.setBigDecimal(4, number.getPrice());
-            ps.setBoolean(5, number.isAvailable());
-            ps.setBoolean(6, number.isLocked());
+            ps.setBoolean(5, number.getAvailable());
+            ps.setBoolean(6, number.getIsLocked());
             ps.setTimestamp(7, number.getLockExpiresAt() != null ? java.sql.Timestamp.valueOf(number.getLockExpiresAt()) : null);
             ps.setObject(8, number.getLockedByUserId());
             ps.setTimestamp(9, java.sql.Timestamp.valueOf(number.getCreatedAt()));
@@ -85,7 +80,7 @@ public class RegistrationNumberDao {
 
         jdbcTemplate.update(sql,
                 number.getNumber(), number.getNumberType().name(), number.getCategory().name(), number.getPrice(),
-                number.isAvailable(), number.isLocked(),
+                number.getAvailable(), number.getIsLocked(),
                 number.getLockExpiresAt() != null ? java.sql.Timestamp.valueOf(number.getLockExpiresAt()) : null,
                 number.getLockedByUserId(), java.sql.Timestamp.valueOf(number.getUpdatedAt()), number.getId());
 
@@ -110,6 +105,7 @@ public class RegistrationNumberDao {
         List<String> numbers = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("number"));
         return numbers.isEmpty() ? "ABC-0000" : numbers.get(0);
     }
+
     public String getCurrentNormalNumber() {
         String sql = "SELECT number FROM registration_numbers " +
                 "WHERE number_type = 'NORMAL' AND category = 'NORMAL' AND is_available = true " +
@@ -118,7 +114,6 @@ public class RegistrationNumberDao {
         List<String> numbers = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("number"));
         return numbers.isEmpty() ? "ABC-0000" : numbers.get(0);
     }
-
 
     public void releaseExpiredLocks() {
         String sql = "UPDATE registration_numbers SET is_locked = false, lock_expires_at = NULL, " +

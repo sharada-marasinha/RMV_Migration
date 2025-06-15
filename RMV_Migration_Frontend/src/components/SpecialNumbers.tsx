@@ -3,11 +3,14 @@ import { Search, Clock, Lock, Star, Zap } from 'lucide-react';
 import { registrationService } from '../services/api';
 import { RegistrationNumber } from '../types';
 import { formatPrice, getCategoryLabel, getCategoryBadgeColor } from '../utils/pricing';
+import { fetchCurrentNumberPlate } from '../store/numberPlateSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 const SpecialNumbers: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { current, loading, error } = useAppSelector((state) => state.numberPlate);
   const [specialNumbers, setSpecialNumbers] = useState<RegistrationNumber[]>([]);
   const [filteredNumbers, setFilteredNumbers] = useState<RegistrationNumber[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [lockedNumber, setLockedNumber] = useState<string | null>(null);
@@ -18,11 +21,16 @@ const SpecialNumbers: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    dispatch(fetchCurrentNumberPlate());
+  }, [dispatch]);
+
+
+  useEffect(() => {
     filterNumbers();
   }, [specialNumbers, searchTerm, categoryFilter]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (lockTimer && lockTimer > 0) {
       interval = setInterval(() => {
         setLockTimer((prev) => {
@@ -41,13 +49,13 @@ const SpecialNumbers: React.FC = () => {
 
   const fetchSpecialNumbers = async () => {
     try {
-      setLoading(true);
+
       const data = await registrationService.getAvailableSpecialNumbers();
       setSpecialNumbers(data);
     } catch (error) {
       console.error('Error fetching special numbers:', error);
     } finally {
-      setLoading(false);
+
     }
   };
 
@@ -117,11 +125,15 @@ const SpecialNumbers: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Special Registration Numbers</h2>
-          <p className="text-sm text-gray-600 mt-1">
-            Search and reserve special registration numbers with premium pricing
-          </p>
+        <div className="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+          <div className="flex flex-col space-y-3">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800">Special Registration Numbers</h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Search and reserve special registration numbers with premium pricing
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Lock Status */}
@@ -185,10 +197,10 @@ const SpecialNumbers: React.FC = () => {
                 <div
                   key={number.id}
                   className={`border rounded-lg p-4 transition-all hover:shadow-md ${number.locked
-                      ? 'border-red-200 bg-red-50'
-                      : number.available
-                        ? 'border-green-200 bg-green-50 hover:border-green-300'
-                        : 'border-gray-200 bg-gray-50'
+                    ? 'border-red-200 bg-red-50'
+                    : number.available
+                      ? 'border-green-200 bg-green-50 hover:border-green-300'
+                      : 'border-gray-200 bg-gray-50'
                     }`}
                 >
                   <div className="flex items-center justify-between mb-3">

@@ -11,10 +11,8 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => {
+  
   const { user } = useAuth();
-
-  console.log(user?.fullName);
-
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: Car },

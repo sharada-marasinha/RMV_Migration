@@ -1,6 +1,6 @@
 package edu.rmv.numberpool;
 
-import edu.rmv.util.SpecialCategory;
+import edu.rmv.util.NumberCategory;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ public class PlateGenerator {
 
         do {
             nextNumber = incrementPlate(nextNumber);
-        } while (findSpacialCategory(nextNumber) != SpecialCategory.NORMAL);
+        } while (findSpacialCategory(nextNumber) != NumberCategory.NORMAL);
 
         return nextNumber;
     }
@@ -96,19 +96,19 @@ public class PlateGenerator {
         return "1234".equals(digits) || "2345".equals(digits) || "3456".equals(digits);
     }
 
-    public static SpecialCategory findSpacialCategory(String plate) {
+    public static NumberCategory findSpacialCategory(String plate) {
         if (plate == null || !plate.matches("[A-Z]{3}-\\d{4}")) {
-            return SpecialCategory.NORMAL; // fallback
+            return NumberCategory.NORMAL; // fallback
         }
 
         String digits = plate.split("-")[1];
 
         if (digits.chars().distinct().count() == 1) {
-            return SpecialCategory.FULL_REPETITION;
+            return NumberCategory.FULL_REPETITION;
         }
 
         if (digits.matches("(1000|2000|3000|4000|5000|6000|7000|8000|9000)")) {
-            return SpecialCategory.MILESTONE;
+            return NumberCategory.MILESTONE;
         }
 
         Map<Character, Integer> counts = new HashMap<>();
@@ -119,14 +119,13 @@ public class PlateGenerator {
         long repeatedDigits = counts.values().stream().filter(v -> v > 1).count();
 
         if (repeatedDigits == 2) {
-            return SpecialCategory.TWO_REPETITIONS;
+            return NumberCategory.TWO_REPETITIONS;
         } else if (repeatedDigits == 1) {
-            return SpecialCategory.ONE_REPETITION;
+            return NumberCategory.ONE_REPETITION;
         }
 
-        return SpecialCategory.NORMAL;
+        return NumberCategory.NORMAL;
     }
-
 
     public static String getRightSideBouncedPlate(String currentPlate) {
         if (currentPlate == null || !currentPlate.matches("[A-Z]{3}-\\d{4}")) {

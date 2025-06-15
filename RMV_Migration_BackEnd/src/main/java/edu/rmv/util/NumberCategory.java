@@ -1,6 +1,6 @@
 package edu.rmv.util;
 
-public enum SpecialCategory {
+public enum NumberCategory {
     NORMAL,
     MILESTONE,
     ONE_REPETITION,

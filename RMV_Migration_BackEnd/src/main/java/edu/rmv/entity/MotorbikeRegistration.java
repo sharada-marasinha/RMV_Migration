@@ -41,7 +41,7 @@ public class MotorbikeRegistration {
     private String paymentPurpose;
     private String bankName;
     private String bankBranch;
-    private RegistrationStatus status = RegistrationStatus.PENDING;
+    private RegistrationStatus status;
     private Long registeredByUserId;
     private LocalDateTime registeredAt;
     private LocalDateTime createdAt = LocalDateTime.now();

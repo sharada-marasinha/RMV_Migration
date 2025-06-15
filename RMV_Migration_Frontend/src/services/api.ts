@@ -1,8 +1,5 @@
-// src/api.ts
-
 import axios from 'axios';
-import { MotorbikeRegistration, RegistrationNumber, NumberPlate } from '../types';
-import { User } from '../context/AuthContext';
+import { MotorbikeRegistration, RegistrationNumber, NumberPlate, LoginResponse } from '../types';
 
 const API_BASE_URL = 'http://localhost:8082/api';
 
@@ -13,7 +10,6 @@ const api = axios.create({
   },
 });
 
-// ✅ Axios Interceptors
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -32,19 +28,15 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       console.warn('Unauthorized! Token may have expired.');
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      // localStorage.removeItem('token');
+      // window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
 
-type LoginResponse = {
-  user: Omit<User, 'token'>;
-  token: string;
-};
 
-// ✅ AuthService
+
 export const authService = {
   login: async (email: string, password: string): Promise<LoginResponse> => {
     const response = await fetch('/api/login', {
@@ -81,7 +73,6 @@ export const authService = {
   },
 };
 
-// ✅ Registration Service
 export const registrationService = {
   getUserRegistrations: async (): Promise<MotorbikeRegistration[]> => {
     const response = await api.get('/registrations');
@@ -160,6 +151,7 @@ export const registrationService = {
 };
 
 export const numberPlateService = {
+
   getCurrentNumberPlate: async (): Promise<NumberPlate> => {
     const response = await api.get('/number-plates/current');
     return response.data;

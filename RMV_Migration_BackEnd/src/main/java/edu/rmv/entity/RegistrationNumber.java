@@ -1,7 +1,7 @@
 package edu.rmv.entity;
 
+import edu.rmv.util.NumberCategory;
 import edu.rmv.util.NumberType;
-import edu.rmv.util.SpecialCategory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,7 @@ public class RegistrationNumber {
     private Long id;
     private String number;
     private NumberType numberType;
-    private SpecialCategory category;
+    private NumberCategory category;
     private BigDecimal price;
     private Boolean available;
     private Boolean isLocked;
@@ -26,25 +26,14 @@ public class RegistrationNumber {
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    public RegistrationNumber(String numberPlate, NumberType numberType, SpecialCategory specialCategory, BigDecimal price) {
+    public RegistrationNumber(String numberPlate, NumberType numberType, NumberCategory numberCategory, BigDecimal price) {
         this.number = numberPlate;
         this.numberType = numberType;
-        this.category = specialCategory;
+        this.category = numberCategory;
         this.price = price;
-        this.available = false;
-        this.isLocked = true;
+        this.isLocked = false;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
-
-
-    public boolean isLocked() {
-        return false;
-    }
-
-    public boolean isAvailable() {
-        return true;
-    }
-
-    public void setLocked(boolean isLocked) {
-    }
 }

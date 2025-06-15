@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, FileText, AlertCircle, CheckCircle, User, Car, CreditCard } from 'lucide-react';
 import { numberPlateService, registrationService } from '../services/api';
 import { NewRegistration, OCRData } from '../types';
 import { parseInvoiceFile, parsePaymentFile, validateOCRData } from '../utils/ocrParser';
 import { formatPrice, getSpecialNumberPrice } from '../utils/pricing';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { fetchCurrentNumberPlate } from '../store/numberPlateSlice';
 
 const NewRegistrationForm: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { current, loading, error } = useAppSelector((state) => state.numberPlate);
+
+  useEffect(() => {
+    dispatch(fetchCurrentNumberPlate());
+  }, [dispatch]);
+
   const [formData, setFormData] = useState<NewRegistration>({
     ownerName: '',
     ownerAddress: '',
@@ -34,7 +43,7 @@ const NewRegistrationForm: React.FC = () => {
   });
 
   const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
 
@@ -111,10 +120,8 @@ const NewRegistrationForm: React.FC = () => {
 
   const handleSubmit = async () => {
 
-    // if (!validateForm()) return;
-
     try {
-      setLoading(true);
+      setBtnLoading(true);
       const currentNumberPlate = await numberPlateService.getCurrentNumberPlate();
       console.log(currentNumberPlate);
 
@@ -154,7 +161,7 @@ const NewRegistrationForm: React.FC = () => {
     } catch (error) {
       setErrors(['Failed to submit registration. Please try again.']);
     } finally {
-      setLoading(false);
+      setBtnLoading(false);
     }
   };
 
@@ -506,36 +513,79 @@ const NewRegistrationForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">New Motorbike Registration</h2>
+    <div className="mx-auto p-4">
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+        {/* Header Section */}
+        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+          <h2 className="text-2xl font-bold text-gray-800">New Motorbike Registration</h2>
           <p className="text-sm text-gray-600 mt-1">
             Complete all steps to register your motorbike
           </p>
         </div>
 
-        {/* Progress Steps */}
+        {/* Current Info Card */}
         <div className="px-6 py-4 border-b border-gray-200">
+          <div className="bg-blue-600 rounded-lg p-4 text-white shadow-sm">
+            <div className="flex flex-col space-y-3 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">
+                  Current Registration Number
+                </h3>
+                <div className="text-3xl font-mono font-bold text-blue-600 tracking-tight">
+                  {current?.numberPlate || 'Unavailable'}
+                </div>
+              </div>
+
+              {current?.numberPlate && (
+                <div className="flex items-center text-sm text-green-600 bg-green-50 px-3 py-1.5 rounded-md">
+                  <svg className="w-4 h-4 mr-1.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  This number is currently reserved for you
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3 text-sm mt-2">
+                <div className="bg-gray-50 px-3 py-2 rounded-md">
+                  <span className="font-medium text-gray-700 block mb-1">Price</span>
+                  <span className="text-gray-900 font-mono">{current ? formatPrice(current.price) : '-'}</span>
+                </div>
+                <div className="bg-gray-50 px-3 py-2 rounded-md">
+                  <span className="font-medium text-gray-700 block mb-1">Category</span>
+                  <span className="text-gray-900">{current?.specialCategory || '-'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress Steps */}
+        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
           <div className="flex items-center justify-between">
             {[1, 2, 3, 4].map((stepNumber) => (
               <div key={stepNumber} className="flex items-center">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= stepNumber
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-600'
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border-2 ${step >= stepNumber
+                    ? 'bg-blue-600 border-blue-600 text-white'
+                    : 'bg-white border-gray-300 text-gray-600'
                     }`}
                 >
                   {stepNumber}
                 </div>
-                <div className="ml-2 text-sm font-medium text-gray-700">
+                <div
+                  className={`ml-2 text-sm font-medium ${step >= stepNumber ? 'text-blue-600' : 'text-gray-500'
+                    }`}
+                >
                   {stepNumber === 1 && 'Owner Info'}
                   {stepNumber === 2 && 'Motorbike Info'}
                   {stepNumber === 3 && 'Documents'}
                   {stepNumber === 4 && 'Complete'}
                 </div>
                 {stepNumber < 4 && (
-                  <div className={`w-16 h-1 mx-4 ${step > stepNumber ? 'bg-blue-600' : 'bg-gray-200'}`} />
+                  <div
+                    className={`w-16 h-1 mx-2 ${step > stepNumber ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
+                  />
                 )}
               </div>
             ))}
@@ -547,46 +597,64 @@ const NewRegistrationForm: React.FC = () => {
           <div className="px-6 py-4 bg-red-50 border-b border-red-200">
             <div className="flex items-center">
               <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
-              <h4 className="text-sm font-medium text-red-800">Please fix the following errors:</h4>
+              <h4 className="text-sm font-medium text-red-800">
+                Please fix the following errors:
+              </h4>
             </div>
-            <ul className="mt-2 text-sm text-red-700 list-disc list-inside">
+            <ul className="mt-2 text-sm text-red-700 space-y-1 pl-5">
               {errors.map((error, index) => (
-                <li key={index}>{error}</li>
+                <li key={index} className="list-disc">{error}</li>
               ))}
             </ul>
           </div>
         )}
 
         {/* Form Content */}
-        <div className="px-6 py-8">
+        <div className="px-6 py-8 bg-white">
           {renderStep()}
         </div>
 
         {/* Navigation */}
         {step < 4 && (
-          <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-between">
             <button
               onClick={() => setStep(Math.max(1, step - 1))}
               disabled={step === 1}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`px-4 py-2 rounded-md ${step === 1
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                }`}
             >
               Previous
             </button>
-            <div className="flex space-x-4">
+            <div className="flex space-x-3">
               {step < 3 ? (
                 <button
                   onClick={() => setStep(step + 1)}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-sm"
                 >
                   Next
                 </button>
               ) : (
                 <button
                   onClick={handleSubmit}
-                  disabled={loading}
-                  className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                  disabled={btnLoading}
+                  className={`px-6 py-2 rounded-md shadow-sm ${btnLoading
+                    ? 'bg-green-400 cursor-not-allowed'
+                    : 'bg-green-600 hover:bg-green-700'
+                    } text-white transition-colors`}
                 >
-                  {loading ? 'Submitting...' : 'Submit Registration'}
+                  {btnLoading ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Submitting...
+                    </span>
+                  ) : (
+                    'Submit Registration'
+                  )}
                 </button>
               )}
             </div>

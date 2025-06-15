@@ -52,7 +52,7 @@ export interface NumberPlate {
   price: number;
   isAvailable: boolean,
   category: 'NORMAL' | 'SPECIAL';
-  specialCategory: 'NORMAL' | 'MILESTONE' | 'ONE_REPETITION' | 'TWO_REPETITIONS' | 'FULL_REPETITION' | 'CHARACTER_BUMP';,
+  specialCategory: 'NORMAL' | 'MILESTONE' | 'ONE_REPETITION' | 'TWO_REPETITIONS' | 'FULL_REPETITION' | 'CHARACTER_BUMP',
   createdAt: any,
   updatedAt: any
 }
@@ -99,6 +99,11 @@ export type User = {
   email: string;
   token: string;
   role?: string;
+};
+
+export type LoginResponse = {
+  user: Omit<User, 'token'>;
+  token: string;
 };
 
 export type TabType = 'dashboard' | 'settings' | 'profile';

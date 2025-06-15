@@ -2,6 +2,7 @@ package edu.rmv.repository.impl;
 
 
 import edu.rmv.entity.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -9,36 +10,26 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class UserDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public UserDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    private final RowMapper<User> userRowMapper = new RowMapper<User>() {
-        @Override
-        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-            User user = new User();
-            user.setId(rs.getLong("id"));
-            user.setUsername(rs.getString("username"));
-            user.setEmail(rs.getString("email"));
-            user.setPassword(rs.getString("password"));
-            user.setFullName(rs.getString("full_name"));
-//            user.setRole(User.UserRole.valueOf(rs.getString("role")));
-//            user.setActive(rs.getBoolean("is_active"));
-            user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-            user.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-            return user;
-        }
+    private final RowMapper<User> userRowMapper = (rs, rowNum) -> {
+        User user = new User();
+        user.setId(rs.getLong("id"));
+        user.setUsername(rs.getString("username"));
+        user.setEmail(rs.getString("email"));
+        user.setPassword(rs.getString("password"));
+        user.setFullName(rs.getString("full_name"));
+        user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        user.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+        return user;
     };
 
     public Optional<User> findByUsername(String username) {
